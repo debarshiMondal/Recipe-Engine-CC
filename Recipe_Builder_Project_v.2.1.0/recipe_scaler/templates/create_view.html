@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create View</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="text-center">Create View</h1>
+        <form method="post">
+            <div class="form-group">
+                <label for="view_name">View Name</label>
+                <input type="text" class="form-control" id="view_name" name="view_name" required>
+            </div>
+            <div class="form-group">
+                <label for="filter_criteria">Filter Criteria</label>
+                <input type="text" class="form-control" id="filter_criteria" name="filter_criteria" placeholder="Leave blank to show all products">
+            </div>
+            <button type="submit" class="btn btn-primary">Create View</button>
+        </form>
+    </div>
+</body>
+</html>

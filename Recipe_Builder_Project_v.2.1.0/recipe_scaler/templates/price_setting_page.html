@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Price Setting Page</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .container {
+            margin-top: 20px;
+        }
+        .btn-custom {
+            background-color: #007bff;
+            color: white;
+            margin: 10px 0;
+        }
+        .btn-custom:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container text-center">
+        <h1>Price Setting Page</h1>
+        <a href="{{ url_for('unit_costs') }}" class="btn btn-custom">Unit Costs</a>
+        <a href="{{ url_for('price_setting_instructions') }}" class="btn btn-custom">Price Setting and Cooking Instructions</a>
+    </div>
+</body>
+</html>

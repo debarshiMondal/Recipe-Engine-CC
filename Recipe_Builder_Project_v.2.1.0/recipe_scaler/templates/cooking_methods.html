@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instruction Manual Generator</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .container {
+            margin-top: 80px;
+        }
+        .btn-custom {
+            background-color: #007bff;
+            color: white;
+            margin: 50px 0;
+            width: 30%; /* Make buttons full width */
+        }
+        .btn-custom:hover {
+            background-color: #0056b3;
+        }
+        .content-section {
+            margin-top: 100px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-center">Instruction Manual Generator</h1>
+        <div class="text-center">
+            <button class="btn btn-custom" onclick="window.location.href='{{ url_for('cooking_methods_page') }}'">Cooking Methods</button>
+            <button class="btn btn-custom" onclick="window.location.href='{{ url_for('price_setting_page') }}'">Price Setting and Cooking Instructions</button>
+        </div>
+    </div>
+</body>
+</html>

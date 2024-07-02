@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Price Setting Instructions</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .container {
+            margin-top: 20px;
+        }
+        .sidebar {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 25%;
+            max-height: 90%;
+            overflow-y: auto;
+            padding-bottom: 20px;
+        }
+        .right-section {
+            border-left: 2px solid #ccc;
+            padding-left: 20px;
+        }
+        .main-content {
+            margin-right: 80%;
+            margin-left: 5%;
+            width: 50%;
+        }
+        .sidebar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .dropdown-menu {
+            width: 1000%;
+        }
+        .palette {
+            border: 1px solid blue;
+            padding: 10px;
+        }
+        .total-cost, .selling-price {
+            border: 3px solid green;
+            padding: 30px;
+            margin-top: 10px;
+            width: 50%;
+        }
+        .profit-margin {
+            border: 1px solid purple;
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 15px;
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+            background-color: #f9f9ff;
+            font-family: Arial, sans-serif;
+            color: #333;
+            width: 35%;
+        }
+        .energy-type {
+            border: 1px solid purple;
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 15px;
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+            background-color: #f9f9ff;
+            font-family: Arial, sans-serif;
+            color: #333;
+            width: 35%;
+        }
+        .my-custom-class {
+            border: 1px solid blue;
+            width: 15%;
+        }
+        .selling-price {
+            border: 3px solid red;
+        }
+        hr {
+            border: 1px solid #ddd;
+        }
+        .btn-raw-materials {
+            background-color: red;
+            color: white;
+        }
+        .btn-packaging-materials {
+            background-color: green;
+            color: white;
+        }
+        .raw-materials-dropdown, .packaging-materials-dropdown {
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container main-content">
+        <h2>What do you like to make today?</h2>
+        <form action="{{ url_for('create_dish') }}" method="post">
+            <div class="form-group">
+                <input type="text" class="form-control" name="dish_name" placeholder="Enter dish name" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Create Dish</button>
+        </form>
+        <hr>
+        {% if dish_name %}
+        <h3>Dish: {{ dish_name }}</h3>
+        <div id="dynamic-buttons" class="d-flex flex-wrap">
+            {% for category, items in dropdown_data.items() %}
+                <div class="dropdown m-2">
+                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton{{ loop.index }}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        {{ category }}
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton{{ loop.index }}">
+                        {% for item in items %}
+                            <a class="dropdown-item" href="#" data-unit-cost="{{ item['unit_cost'] }}" onclick="selectItem('{{ category }}', '{{ item['name'] }}', '{{ item['unit_cost'] }}')">{{ item['name'] }}</a>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endfor %}
+            <!-- Raw Materials Dropdown -->
+            <div class="dropdown m-2 raw-materials-dropdown">
+                <button class="btn btn-raw-materials dropdown-toggle" type="button" id="rawMaterialDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Raw Materials
+                </button>
+                <div class="dropdown-menu" aria-labelledby="rawMaterialDropdown">
+                    {% for item in raw_materials %}
+                        <a class="dropdown-item" href="#" data-unit-cost="{{ item['unit_cost'] }}" onclick="selectItem('Raw Material', '{{ item['Product'] }}', '{{ item['unit_cost'] }}')">{{ item['Product'] }}</a>
+                    {% endfor %}
+                </div>
+            </div>
+            <!-- Packaging Materials Dropdown -->
+            <div class="dropdown m-2 packaging-materials-dropdown">
+                <button class="btn btn-packaging-materials dropdown-toggle" type="button" id="packagingMaterialDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Packaging Materials
+                </button>
+                <div class="dropdown-menu" aria-labelledby="packagingMaterialDropdown">
+                    {% for item in packaging_materials %}
+                        <a class="dropdown-item" href="#" data-unit-cost="{{ item['unit_cost'] }}" onclick="selectItem('Packaging Material', '{{ item['Product'] }}', '{{ item['unit_cost'] }}')">{{ item['Product'] }}</a>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        <div class="palette" id="palette">
+            <h4>Selected Products:</h4>
+        </div>
+        <div class="total-cost" id="total-cost">
+            <h4>Total Cost: ₹<span id="total-cost-value">0</span></h4>
+        </div>
+        <div class="energy-type">
+            <label for="energyType">Energy Type:</label>
+            <select class="form-control" id="energyType" onchange="updateEnergyFields()">
+                <option value="">Select</option>
+                <option value="Electricity">Electricity</option>
+                <option value="Gas">Gas</option>
+            </select>
+        </div>
+        <div id="energyFields"></div>
+        <div class="form-group profit-margin">
+            <label for="profitMargin">Profit Margin (%):</label>
+            <input type="number" class="form-control" id="profitMargin" placeholder="Enter profit margin" onchange="updateSellingPrice()">
+        </div>
+        <div class="form-group selling-price">
+            <h4>Selling Price: ₹<span id="selling-price-value">0</span></h4>
+        </div>
+        <hr>
+        {% endif %}
+    </div>
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h3>Available Categories</h3>
+            <form action="{{ url_for('categorize_products_route') }}" method="post" style="display:inline;">
+                <button type="submit" class="btn btn-success btn-sm">Create the Data Base</button>
+            </form>
+        </div>
+        <ul class="list-group">
+            {% for category in categories %}
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    {{ category }}
+                    <form action="{{ url_for('price_setting_instructions') }}" method="post" style="display:inline;">
+                        <input type="hidden" name="category_name" value="{{ category }}">
+                        <button type="submit" name="delete_category" class="btn btn-danger btn-sm">Delete</button>
+                    </form>
+                </li>
+            {% endfor %}
+        </ul>
+        <hr>
+        <form action="{{ url_for('price_setting_instructions') }}" method="post">
+            <div class="form-group">
+                <label for="category_name">Create Category</label>
+                <input type="text" class="form-control" name="category_name" placeholder="Enter category name" required>
+            </div>
+            <button type="submit" name="create_category" class="btn btn-primary">Create Category</button>
+        </form>
+    </div>
+    <div class="footer">
+        <a href="{{ url_for('created_product_history') }}">Created Product History</a>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+    <script>
+        function selectItem(category, name, unit_cost) {
+            console.log(`Selected item: ${name}, Unit cost: ${unit_cost}`); // Debugging statement
+            const palette = document.getElementById('palette');
+            const itemDiv = document.createElement('div');
+            itemDiv.className = 'd-flex align-items-center mb-2';
+            itemDiv.innerHTML = `
+                <span>${category}: ${name}</span>
+                <input type="number" class="form-control ml-2" style="width: 100px;" placeholder="Qty" min="1" step="1" onchange="updateTotalCost(this, ${unit_cost})">
+                <select class="form-control ml-2" style="width: 100px;">
+                    <option value="Kg">Kg</option>
+                    <option value="Pieces">Pieces</option>
+                </select>
+                <span class="ml-2">Unit Cost: ₹${unit_cost}</span>
+                <button class="btn btn-danger ml-2" onclick="removeItem(this, ${unit_cost})">Remove</button>
+            `;
+            palette.appendChild(itemDiv);
+            updateTotalCost(itemDiv.querySelector('input'), unit_cost);
+        }
+
+ function updateTotalCost(input, unit_cost) {
+    const quantity = parseFloat(input.value);
+    const totalCostElement = document.getElementById('total-cost-value');
+    const previousQuantity = parseFloat(input.getAttribute('data-previous-quantity')) || 0;
+    let currentTotalCost = parseFloat(totalCostElement.textContent);
+
+    if (!isNaN(quantity) && quantity >= 0) {
+        currentTotalCost += (quantity - previousQuantity) * unit_cost;
+        input.setAttribute('data-previous-quantity', quantity);
+    }
+
+    totalCostElement.textContent = currentTotalCost.toFixed(2);
+    updateSellingPrice();
+}
+
+function removeItem(button, unit_cost) {
+    const itemDiv = button.parentElement;
+    const quantityInput = itemDiv.querySelector('input');
+    const quantity = parseFloat(quantityInput.value);
+    const totalCostElement = document.getElementById('total-cost-value');
+    let currentTotalCost = parseFloat(totalCostElement.textContent);
+
+    if (!isNaN(quantity) && quantity > 0) {
+        currentTotalCost -= quantity * unit_cost;
+    }
+    totalCostElement.textContent = currentTotalCost.toFixed(2);
+    itemDiv.remove();
+    updateSellingPrice();
+}
+
+        function updateEnergyFields() {
+            const energyType = document.getElementById('energyType').value;
+            const energyFields = document.getElementById('energyFields');
+            energyFields.innerHTML = '';
+
+            if (energyType === 'Electricity') {
+                energyFields.innerHTML = `
+                    <div class="form-group">
+                        <label for="electricityPower">Power (kW):</label>
+                        <input type="number" class="form-control my-custom-class" id="electricityPower" onchange="updateEnergyCost()">
+                    </div>
+                    <div class="form-group">
+                        <label for="electricityTime">Time (mins):</label>
+                        <input type="number" class="form-control my-custom-class" id="electricityTime" onchange="updateEnergyCost()">
+                    </div>
+                    <div class="form-group">
+                        <label for="electricityCost">Cost per kWh:</label>
+                        <input type="number" class="form-control my-custom-class" id="electricityCost" onchange="updateEnergyCost()">
+                    </div>
+                `;
+            } else if (energyType === 'Gas') {
+                energyFields.innerHTML = `
+                    <div class="form-group">
+                        <label for="gasPower">Power (kW):</label>
+                        <input type="number" class="form-control my-custom-class" id="gasPower" onchange="updateEnergyCost()">
+                    </div>
+                    <div class="form-group">
+                        <label for="gasTime">Time (mins):</label>
+                        <input type="number" class="form-control my-custom-class" id="gasTime" onchange="updateEnergyCost()">
+                    </div>
+                    <div class="form-group">
+                        <label for="gasCylinderCost">Cost of Gas Cylinder:</label>
+                        <input type="number" class="form-control my-custom-class" id="gasCylinderCost" onchange="updateEnergyCost()">
+                    </div>
+                    <div class="form-group">
+                        <label for="gasCylinderType">Cylinder Type (Kg):</label>
+                        <input type="number" class="form-control my-custom-class" id="gasCylinderType" onchange="updateEnergyCost()">
+                    </div>
+                `;
+            }
+        }
+
+        function updateEnergyCost() {
+            const energyType = document.getElementById('energyType').value;
+            const totalCostElement = document.getElementById('total-cost-value');
+            let currentTotalCost = parseFloat(totalCostElement.textContent);
+
+            if (energyType === 'Electricity') {
+                const power = parseFloat(document.getElementById('electricityPower').value);
+                const time = parseFloat(document.getElementById('electricityTime').value);
+                const costPerKwh = parseFloat(document.getElementById('electricityCost').value);
+
+                if (!isNaN(power) && !isNaN(time) && !isNaN(costPerKwh)) {
+                    const electricityCost = power * (time / 60) * costPerKwh;
+                    currentTotalCost += electricityCost;
+                }
+            } else if (energyType === 'Gas') {
+                const power = parseFloat(document.getElementById('gasPower').value);
+                const time = parseFloat(document.getElementById('gasTime').value);
+                const gasCylinderCost = parseFloat(document.getElementById('gasCylinderCost').value);
+                const gasCylinderType = parseFloat(document.getElementById('gasCylinderType').value);
+
+                if (!isNaN(power) && !isNaN(time) && !isNaN(gasCylinderCost) && !isNaN(gasCylinderType)) {
+                    const gasCost = power * (time / 60) * 0.08 * (gasCylinderCost / gasCylinderType);
+                    currentTotalCost += gasCost;
+                }
+            }
+            totalCostElement.textContent = currentTotalCost.toFixed(2);
+            updateSellingPrice();
+        }
+
+        function updateSellingPrice() {
+            const totalCost = parseFloat(document.getElementById('total-cost-value').textContent);
+            const profitMargin = parseFloat(document.getElementById('profitMargin').value);
+            const sellingPriceElement = document.getElementById('selling-price-value');
+
+            if (!isNaN(totalCost) && !isNaN(profitMargin) && profitMargin > 0) {
+                const sellingPrice = totalCost / (1 - (profitMargin / 100));
+                sellingPriceElement.textContent = sellingPrice.toFixed(2);
+            } else {
+                sellingPriceElement.textContent = '0';
+            }
+        }
+    </script>
+</body>
+</html>

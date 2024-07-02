@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recipe Processor Home</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .container {
+            margin-top: 20px;
+        }
+        .btn-custom {
+            background-color: #007bff;
+            color: white;
+            margin: 10px 0;
+        }
+        .btn-custom:hover {
+            background-color: #0056b3;
+        }
+        .logo {
+            max-width: 300px;
+            margin-bottom: 5px;
+        }
+        .title {
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="text-center">
+            <img src="{{ url_for('static', filename='CC Logo.png') }}" alt="Company Logo" class="logo">
+        </div>
+        <h1 class="text-center title">Production Management Tool</h1>
+        
+        <div class="text-center">
+            <a href="{{ url_for('upload_process_recipes') }}" class="btn btn-custom">Upload and Process Recipes</a>
+            <a href="{{ url_for('inventory_order') }}" class="btn btn-custom">Inventory and Order</a>
+            <a href="{{ url_for('cooking_methods') }}" class="btn btn-custom">Instruction Manual Generator</a>
+            <a href="{{ url_for('pos') }}" class="btn btn-custom">POS</a>
+        </div>
+    </div>
+</body>
+</html>

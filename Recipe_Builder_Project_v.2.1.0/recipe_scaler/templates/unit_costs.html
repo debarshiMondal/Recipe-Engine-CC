@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unit Costs</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .container {
+            margin-top: 20px;
+        }
+        .section {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+            <!-- CC Products Section -->
+            <div class="col-md-4 section">
+                <h3>CC Products</h3>
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Product Name</th>
+                            <th>Unit</th>
+                            <th>Unit Cost</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for product in cc_products %}
+                        <tr>
+                            <td>{{ product.name }}</td>
+                            <td>{{ product.unit }}</td>
+                            <td>{{ product.unit_cost }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <a href="{{ url_for('download_cc_products') }}" class="btn btn-primary">Download CC Products</a>
+            </div>
+            <!-- OP Products Section -->
+            <div class="col-md-4 section">
+                <h3>OP Products</h3>
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Product Name</th>
+                            <th>Unit</th>
+                            <th>Unit Cost</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for product in op_products %}
+                        <tr>
+                            <td>{{ product.name }}</td>
+                            <td>{{ product.unit }}</td>
+                            <td>{{ product.unit_cost }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <a href="{{ url_for('download_op_products') }}" class="btn btn-primary">Download OP Products</a>
+            </div>
+            <!-- Raw Materials Section -->
+            <div class="col-md-4 section">
+                <h3>Raw Materials</h3>
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Product Name</th>
+                            <th>Unit</th>
+                            <th>Unit Cost</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for product in raw_materials %}
+                        <tr>
+                            <td>{{ product.name }}</td>
+                            <td>{{ product.unit }}</td>
+                            <td>{{ product.unit_cost }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <a href="{{ url_for('download_raw_materials') }}" class="btn btn-primary">Download Raw Materials</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Recipes</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .container {
+            margin-top: 20px; /* Decreased space */
+        }
+        .btn-custom {
+            background-color: #007bff;
+            color: white;
+        }
+        .btn-custom:hover {
+            background-color: #0056b3;
+        }
+        .card-custom {
+            margin-bottom: 20px;
+        }
+        .logo {
+            max-width: 300px; /* Larger size */
+            margin-bottom: 5px; /* Decreased space */
+        }
+        .right-section {
+            border-left: 2px solid #ccc;
+            padding-left: 20px;
+        }
+        .title {
+            margin-top: 5px; /* Decreased space */
+        }
+        .dropdown-custom {
+            max-height: 200px;
+            overflow-y: auto;
+        }
+    </style>
+    <script>
+        function addRecipeField() {
+            var container = document.getElementById("recipes-container");
+            var index = container.children.length / 3;  // each entry has three children: the select, the input, and the unit select
+
+            var select = document.createElement("select");
+            select.className = "form-control dropdown-custom mb-2";
+            select.name = "recipe";
+            select.innerHTML = `{% for recipe in recipes %}<option value="{{ recipe.filename }}">{{ recipe.display_name }}</option>{% endfor %}`;
+
+            var input = document.createElement("input");
+            input.type = "number";
+            input.className = "form-control mb-2";
+            input.name = "recipe_qty";
+            input.placeholder = "Quantity to Produce";
+            input.step = "any";
+
+            var unitSelect = document.createElement("select");
+            unitSelect.className = "form-control mb-2";
+            unitSelect.name = "recipe_unit";
+            unitSelect.innerHTML = `<option value="kg">kg</option><option value="pieces">pieces</option>`;
+
+            container.appendChild(select);
+            container.appendChild(input);
+            container.appendChild(unitSelect);
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <div class="text-center">
+            <img src="{{ url_for('static', filename='CC Logo.png') }}" alt="Company Logo" class="logo">
+        </div>
+        <h1 class="text-center title">Upload Recipes</h1>
+        <form method="post" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="recipe_name">Recipe Name</label>
+                <input type="text" class="form-control" id="recipe_name" name="recipe_name" required>
+            </div>
+            <div class="form-group">
+                <label for="quantity_produced">Quantity Produced</label>
+                <input type="number" class="form-control" id="quantity_produced" name="quantity_produced" required step="any">
+            </div>
+            <div class="form-group">
+                <label for="unit">Unit</label>
+                <select class="form-control" id="unit" name="unit">
+                    <option value="kg">kg</option>
+                    <option value="pieces">pieces</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="file">Upload Recipe File</label>
+                <input type="file" class="form-control-file" id="file" name="file" required>
+            </div>
+            <button type="submit" class="btn btn-custom">Upload Recipe</button>
+        </form>
+        
+        <hr>
+
+        <div class="row">
+            <div class="col-md-8">
+                <h1 class="text-center">Process Recipes</h1>
+                {% if recipes %}
+                    <form method="post" action="/process_recipes">
+                        <div id="recipes-container">
+                            <div class="form-group">
+                                <label for="recipe">Select Recipes</label>
+                                <select class="form-control dropdown-custom mb-2" id="recipe" name="recipe">
+                                    {% for recipe in recipes %}
+                                        <option value="{{ recipe.filename }}">{{ recipe.display_name }}</option>
+                                    {% endfor %}
+                                </select>
+                                <input type="number" class="form-control mb-2" id="recipe_qty" name="recipe_qty" placeholder="Quantity to Produce" step="any">
+                                <select class="form-control mb-2" id="recipe_unit" name="recipe_unit">
+                                    <option value="kg">kg</option>
+                                    <option value="pieces">pieces</option>
+                                </select>
+                            </div>
+                        </div>
+                        <button type="button" class="btn btn-custom" onclick="addRecipeField()">Add Another Recipe</button>
+                        <button type="submit" class="btn btn-custom">Process Selected Recipes</button>
+                    </form>
+                {% else %}
+                    <p>No recipes uploaded yet.</p>
+                {% endif %}
+
+                <hr>
+
+                <h2 class="text-center">Production Recipe for Kitchen Team</h2>
+                {% if costs %}
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="table-responsive">
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Product</th>
+                                            <th>Cost per Unit</th>
+                                            <th>Download</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for cost in costs %}
+                                            <tr>
+                                                <td>{{ cost.display_name }}</td>
+                                                <td>{{ cost.cost_per_unit }}</td>
+                                                <td>
+                                                    <a href="{{ url_for('download_team_file', filename=cost.recipe) }}" class="btn btn-custom btn-sm">Download</a>
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                {% else %}
+                    <p>No processed recipes available.</p>
+                {% endif %}
+
+                <hr>
+
+                <h2 class="text-center">Bazar for the Production</h2>
+                {% if latest_bazar_file %}
+                    <div class="alert alert-success" role="alert">
+                        <a href="{{ url_for('download_bazar_file', filename=latest_bazar_file) }}" class="alert-link">Download the Bazar Requirement File</a>
+                    </div>
+                {% else %}
+                    <p>No bazar file generated yet.</p>
+                {% endif %}
+            </div>
+
+            <div class="col-md-4 right-section">
+
+                <h2 class="text-center">Estimated Invoice</h2>
+                {% if invoice_file %}
+                    <div class="alert alert-success" role="alert">
+                        <a href="{{ url_for('download_invoice', filename=invoice_file) }}" class="alert-link">Download Estimated Invoice</a>
+                    </div>
+                {% else %}
+                    <p>No invoice generated yet.</p>
+                {% endif %}
+
+            </div>
+        </div>
+    </div>
+</body>
+</html>

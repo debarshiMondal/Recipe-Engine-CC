@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventory and Order</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .container {
+            margin-top: 80px;
+        }
+        .btn-custom {
+            background-color: #007bff;
+            color: white;
+            margin-bottom: 50px; /* Increased gap between buttons */
+        }
+        .btn-custom:hover {
+            background-color: #0056b3;
+        }
+        .title {
+            margin-bottom: 60px; /* Increased gap between title and first button */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-center title">Inventory and Order</h1>
+        <div class="text-center">
+            <button onclick="location.href='{{ url_for('raw_material_stock') }}'" class="btn btn-custom btn-lg">Raw Material Stock</button><br>
+            <button onclick="location.href='{{ url_for('ccp_stock') }}'" class="btn btn-custom btn-lg">CC-P Stock</button><br>
+            <button onclick="location.href='{{ url_for('op_stock') }}'" class="btn btn-custom btn-lg">O-P Stock</button><br>
+            <button onclick="location.href='{{ url_for('op_purchase_order') }}'" class="btn btn-custom btn-lg">O-P Purchase Order</button>
+        </div>
+    </div>
+</body>
+</html>

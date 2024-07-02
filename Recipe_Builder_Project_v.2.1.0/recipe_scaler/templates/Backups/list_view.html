@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>List Views</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="text-center">List Views</h1>
+        <table class="table table-bordered mt-3">
+            <thead>
+                <tr>
+                    <th>View Name</th>
+                    <th>Filter Criteria</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for view in views %}
+                <tr>
+                    <td><a href="{{ url_for('view', view_name=view['View Name']) }}">{{ view['View Name'] }}</a></td>
+                    <td>{{ view['Filter Criteria'] }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

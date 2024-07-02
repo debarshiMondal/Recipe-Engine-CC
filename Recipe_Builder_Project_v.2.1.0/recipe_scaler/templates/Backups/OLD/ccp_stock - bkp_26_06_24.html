@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CC-P Stock</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .container {
+            margin-top: 20px;
+        }
+        .btn-custom {
+            background-color: #007bff;
+            color: white;
+        }
+        .btn-custom:hover {
+            background-color: #0056b3;
+        }
+        .btn-save {
+            margin-bottom: 20px;
+        }
+        .table th, .table td {
+            vertical-align: middle;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-center">CC-P Stock</h1>
+        <form method="POST" action="/ccp_stock">
+            <button type="submit" class="btn btn-custom btn-save">Save</button>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Sl No.</th>
+                        <th>Product</th>
+                        <th>Current Stock (Kg)</th>
+                        <th>Current Stock (Pieces)</th>
+                        <th>Update Stock</th>
+                        <th>Unit</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for i, stock in enumerate(stock_data) %}
+                    <tr>
+                        <td>{{ i+1 }}</td>
+                        <td>{{ stock.Product }}</td>
+                        <td style="{{ stock.current_stock_kg_style }}">{{ stock['Current Stock (Kg)'] }}</td>
+                        <td style="{{ stock.current_stock_pieces_style }}">{{ stock['Current Stock (Pieces)'] }}</td>
+                        <td>
+                            <input type="hidden" name="product" value="{{ stock.Product }}">
+                            <input type="number" step="any" name="update_stock">
+                        </td>
+                        <td>
+                            <select name="unit" class="form-control">
+                                <option value="kg">kg</option>
+                                <option value="pieces">pieces</option>
+                            </select>
+                        </td>
+                        <td>
+                            <button type="submit" class="btn btn-custom">Update</button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </form>
+        <hr>
+        <form method="GET" action="/ccp_stock">
+            <h2>Set Threshold Values</h2>
+            <div class="form-group">
+                <label for="threshold_kg">Threshold for Kg:</label>
+                <input type="number" id="threshold_kg" name="threshold_kg" class="form-control" value="{{ threshold_kg }}">
+            </div>
+            <div class="form-group">
+                <label for="threshold_pieces">Threshold for Pieces:</label>
+                <input type="number" id="threshold_pieces" name="threshold_pieces" class="form-control" value="{{ threshold_pieces }}">
+            </div>
+            <button type="submit" class="btn btn-custom">Set Threshold</button>
+        </form>
+    </div>
+</body>
+</html>

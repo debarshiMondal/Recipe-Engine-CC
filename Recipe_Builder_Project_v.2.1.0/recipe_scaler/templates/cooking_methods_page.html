@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cooking Methods</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .container {
+            margin-top: 20px;
+        }
+        .btn-custom {
+            background-color: #007bff;
+            color: white;
+            margin: 10px 0;
+        }
+        .btn-custom:hover {
+            background-color: #0056b3;
+        }
+        .logo {
+            max-width: 300px;
+            margin-bottom: 5px;
+        }
+        .title {
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="text-center">
+            <img src="{{ url_for('static', filename='CC Logo.png') }}" alt="Company Logo" class="logo">
+        </div>
+        <h1 class="text-center title">Cooking Methods</h1>
+        <form method="post" enctype="multipart/form-data" action="/Methods">
+            <div class="form-group">
+                <label for="method_file">Upload Method PDF</label>
+                <input type="file" class="form-control-file" id="method_file" name="file" accept=".pdf" required>
+            </div>
+            <button type="submit" class="btn btn-custom">Upload Method</button>
+        </form>
+        {% if methods_files %}
+            <ul class="list-group mt-3">
+                {% for method_file in methods_files %}
+                    <li class="list-group-item">
+                        <a href="{{ url_for('download_method', filename=method_file.filename) }}">{{ method_file.display_name }}</a>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>No method files available.</p>
+        {% endif %}
+    </div>
+</body>
+</html>

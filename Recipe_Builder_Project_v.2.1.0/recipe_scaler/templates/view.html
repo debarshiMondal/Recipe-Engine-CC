@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ view_name }} View</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="text-center">{{ view_name }} View</h1>
+        <p><strong>Filter Criteria:</strong> {{ filter_criteria }}</p>
+        <table class="table table-bordered mt-3">
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Current Stock (Kg)</th>
+                    <th>Current Stock (Pieces)</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for stock in stock_data %}
+                <tr>
+                    <td>{{ stock.Product }}</td>
+                    <td>{{ stock['Current Stock (Kg)'] }}</td>
+                    <td>{{ stock['Current Stock (Pieces)'] }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>
